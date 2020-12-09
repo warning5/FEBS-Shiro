@@ -1,4 +1,4 @@
-package cc.mrbird.febs.job.util;
+package cc.mrbird.febs.job.utils;
 
 import cc.mrbird.febs.common.utils.SpringContextUtil;
 import cc.mrbird.febs.job.entity.Job;
@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 @Slf4j
 public class ScheduleJob extends QuartzJobBean {
 
-    private ThreadPoolTaskExecutor scheduleJobExecutorService = SpringContextUtil.getBean("scheduleJobExecutorService", ThreadPoolTaskExecutor.class);
+    private final ThreadPoolTaskExecutor scheduleJobExecutorService = SpringContextUtil.getBean("scheduleJobExecutorService", ThreadPoolTaskExecutor.class);
 
     @Override
     protected void executeInternal(JobExecutionContext context) {

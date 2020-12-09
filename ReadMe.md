@@ -2,9 +2,9 @@
 
 ### FEBS-Shiro 2.0
 ![https://img.shields.io/badge/license-Apache%202.0-blue.svg?longCache=true&style=flat-square](https://img.shields.io/badge/license-Apache%202.0-blue.svg?longCache=true&style=flat-square)
-![https://img.shields.io/badge/springboot-2.2.1-yellow.svg?style=flat-square](https://img.shields.io/badge/springboot-2.2.1-yellow.svg?style=flat-square)
-![https://img.shields.io/badge/shiro-1.4.2-orange.svg?longCache=true&style=flat-square](https://img.shields.io/badge/shiro-1.4.2-orange.svg?longCache=true&style=flat-square)
-![https://img.shields.io/badge/layui-2.5.5-brightgreen.svg?longCache=true&style=flat-square](https://img.shields.io/badge/layui-2.5.5-brightgreen.svg?longCache=true&style=flat-square)
+![https://img.shields.io/badge/springboot-2.4.0-yellow.svg?style=flat-square](https://img.shields.io/badge/springboot-2.4.0-yellow.svg?style=flat-square)
+![https://img.shields.io/badge/shiro-1.6.0-orange.svg?longCache=true&style=flat-square](https://img.shields.io/badge/shiro-1.6.0-orange.svg?longCache=true&style=flat-square)
+![https://img.shields.io/badge/layui-2.5.6-brightgreen.svg?longCache=true&style=flat-square](https://img.shields.io/badge/layui-2.5.6-brightgreen.svg?longCache=true&style=flat-square)
 
 FEBS-Shiro是一款简单高效的后台权限管理系统，使用Spring Boot，Shiro和Layui构建。FEBS意指：**F**ast，**E**asy use，**B**eautiful和**S**afe。相信无论作为企业级应用，私活开发脚手架或者权限系统构建学习，FEBS-Shiro都会是一个不错的选择。
 
@@ -33,9 +33,6 @@ Jana   | 1234qwer  |跑批人员，负责任务调度跑批模块
 
 名称 | 描述| 地址
 ---|---|---
-FEBS-Shiro 1.x | Spring Boot 2.0.4 & Shiro1.4.2 权限管理系统（单页）。 | [https://github.com/wuyouzhuguli/FEBS-Shiro/tree/mysql](https://github.com/wuyouzhuguli/FEBS-Shiro/tree/mysql)
-FEBS-Security | Spring Boot 2.0.4 & Spring Security 5.0.7 权限管理系统（单页）。 | [https://github.com/wuyouzhuguli/FEBS-Security](https://github.com/wuyouzhuguli/FEBS-Security)
-FEBS-Vue | FEBS-Shiro前后端分离版本，前端架构采用Vue全家桶。 | [https://github.com/wuyouzhuguli/FEBS-Vue](https://github.com/wuyouzhuguli/FEBS-Vue)
 FEBS-Cloud | 基于Spring Cloud的微服务权限系统 | [https://github.com/wuyouzhuguli/FEBS-Cloud](https://github.com/wuyouzhuguli/FEBS-Cloud)
 
 ### 系统模块
@@ -93,17 +90,18 @@ FEBS-Cloud | 基于Spring Cloud的微服务权限系统 | [https://github.com/wu
 ### 技术选型
 
 #### 后端
-- [Spring Boot 2.2.1](http://spring.io/projects/spring-boot/)
+- [Spring Boot 2.4.0](http://spring.io/projects/spring-boot/)
 - [Mybatis-Plus](https://mp.baomidou.com/guide/)
-- [MySQL 5.7.x](https://dev.mysql.com/downloads/mysql/5.7.html#downloads),[Hikari](https://brettwooldridge.github.io/HikariCP/),[Redis](https://redis.io/)
-- [Shiro 1.4.2](http://shiro.apache.org/)
+- [MySQL 5.7.x](https://dev.mysql.com/downloads/mysql/5.7.html#downloads)
+- [Hikari](https://brettwooldridge.github.io/HikariCP/)
+- [Redis](https://redis.io/)
+- [Shiro 1.6.0](http://shiro.apache.org/)
 
 #### 前端
-- [Layui 2.5.5](https://www.layui.com/)
+- [Layui 2.5.6](https://www.layui.com/)
 - [Nepadmin](https://gitee.com/june000/nep-admin)
-- [formSelects 4.x 多选框](https://hnzzmsf.github.io/example/example_v4.html)
 - [eleTree 树组件](https://layuiextend.hsianglee.cn/eletree/)
-- [formSelect.js树形下拉](https://wujiawei0926.gitee.io/treeselect/docs/doc.html)
+- [xm-select](https://gitee.com/maplemei/xm-select)
 - [Apexcharts图表](https://apexcharts.com/)
 
 ### 系统截图
@@ -171,9 +169,4 @@ FEBS-Cloud | 基于Spring Cloud的微服务权限系统 | [https://github.com/wu
 
 <a href="https://www.jetbrains.com/?from=FEBS Shiro">
     <img src="screenshot/jetbrains.png" width="100px"></a>
-
-### 支持作者
-如果该系统对您有帮助的话，请作者喝杯肥宅水吧🍺~
-
-![treatme](screenshot/treatme.jpg)
 

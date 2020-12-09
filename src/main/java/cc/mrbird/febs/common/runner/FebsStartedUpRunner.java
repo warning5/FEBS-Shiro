@@ -2,7 +2,7 @@ package cc.mrbird.febs.common.runner;
 
 import cc.mrbird.febs.common.entity.FebsConstant;
 import cc.mrbird.febs.common.properties.FebsProperties;
-import cc.mrbird.febs.common.service.RedisService;
+import cc.mrbird.febs.common.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,6 @@ public class FebsStartedUpRunner implements ApplicationRunner {
 
     private final ConfigurableApplicationContext context;
     private final FebsProperties febsProperties;
-    private final RedisService redisService;
 
     @Value("${server.port:8080}")
     private String port;
@@ -33,22 +32,11 @@ public class FebsStartedUpRunner implements ApplicationRunner {
     private String contextPath;
     @Value("${spring.profiles.active}")
     private String active;
+    @Value("${spring.application.package-time:'1970-01-01T00:00:00Z'}")
+    private String packageTime;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        try {
-            // 测试 Redis连接是否正常
-            redisService.hasKey("febs_test");
-        } catch (Exception e) {
-            log.error(" ____   __    _   _ ");
-            log.error("| |_   / /\\  | | | |");
-            log.error("|_|   /_/--\\ |_| |_|__");
-            log.error("                        ");
-            log.error("FEBS启动失败，{}", e.getMessage());
-            log.error("Redis连接异常，请检查Redis连接配置并确保Redis服务已启动");
-            // 关闭 FEBS
-            context.close();
-        }
         if (context.isActive()) {
             InetAddress address = InetAddress.getLocalHost();
             String url = String.format("http://%s:%s", address.getHostAddress(), port);
@@ -63,7 +51,7 @@ public class FebsStartedUpRunner implements ApplicationRunner {
             log.info("/ /`  / / \\ | |\\/| | |_) | |   | |_   | |  | |_  ");
             log.info("\\_\\_, \\_\\_/ |_|  | |_|   |_|__ |_|__  |_|  |_|__ ");
             log.info("                                                      ");
-            log.info("FEBS 权限系统启动完毕，地址：{}", url);
+            log.info("FEBS权限系统启动完毕，系统编译打包时间：{}，地址：{}", DateUtil.formatUtcTime(packageTime), url);
 
             boolean auto = febsProperties.isAutoOpenBrowser();
             if (auto && StringUtils.equalsIgnoreCase(active, FebsConstant.DEVELOP)) {

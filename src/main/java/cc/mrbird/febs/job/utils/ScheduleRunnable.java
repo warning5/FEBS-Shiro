@@ -1,4 +1,4 @@
-package cc.mrbird.febs.job.util;
+package cc.mrbird.febs.job.utils;
 
 import cc.mrbird.febs.common.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +15,9 @@ import java.lang.reflect.Method;
 @Slf4j
 public class ScheduleRunnable implements Runnable {
 
-    private Object target;
-    private Method method;
-    private String params;
+    private final Object target;
+    private final Method method;
+    private final String params;
 
     ScheduleRunnable(String beanName, String methodName, String params) throws NoSuchMethodException, SecurityException {
         this.target = SpringContextUtil.getBean(beanName);
