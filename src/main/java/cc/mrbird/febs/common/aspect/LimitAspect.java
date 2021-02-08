@@ -1,7 +1,9 @@
 package cc.mrbird.febs.common.aspect;
 
+import cc.mrbird.febs.common.annotation.ConditionOnRedisCache;
 import cc.mrbird.febs.common.annotation.Limit;
 import cc.mrbird.febs.common.entity.LimitType;
+import cc.mrbird.febs.common.entity.Strings;
 import cc.mrbird.febs.common.exception.LimitAccessException;
 import cc.mrbird.febs.common.utils.HttpContextUtil;
 import cc.mrbird.febs.common.utils.IpUtil;
@@ -23,13 +25,14 @@ import java.lang.reflect.Method;
 
 
 /**
- * 接口限流
+ * 基于Redis的接口限流，如果未开启Redis，则该功能不生效
  *
  * @author MrBird
  */
 @Slf4j
 @Aspect
 @Component
+@ConditionOnRedisCache
 @RequiredArgsConstructor
 public class LimitAspect extends BaseAspectSupport {
 
@@ -60,14 +63,15 @@ public class LimitAspect extends BaseAspectSupport {
             default:
                 key = StringUtils.upperCase(method.getName());
         }
-        ImmutableList<String> keys = ImmutableList.of(StringUtils.join(limitAnnotation.prefix() + "_", key, ip));
+        ImmutableList<String> keys = ImmutableList.of(StringUtils.join(limitAnnotation.prefix() + Strings.UNDER_LINE, key, ip));
         String luaScript = buildLuaScript();
         RedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);
         Long count = redisTemplate.execute(redisScript, keys, limitCount, limitPeriod);
-        log.info("IP:{} 第 {} 次访问key为 {}，描述为 [{}] 的接口", ip, count, keys, name);
         if (count != null && count.intValue() <= limitCount) {
+            log.info("IP:{} 第 {} 次访问key为 {}，描述为 [{}] 的接口", ip, count, keys, name);
             return point.proceed();
         } else {
+            log.error("key为 {}，描述为 [{}] 的接口访问超出频率限制", keys, name);
             throw new LimitAccessException("接口访问超出频率限制");
         }
     }

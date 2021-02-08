@@ -1,6 +1,7 @@
 package cc.mrbird.febs.monitor.helper;
 
 import cc.mrbird.febs.common.annotation.Helper;
+import cc.mrbird.febs.common.entity.Strings;
 import cc.mrbird.febs.common.utils.DateUtil;
 import cc.mrbird.febs.monitor.endpoint.FebsMetricsEndpoint;
 import cc.mrbird.febs.monitor.entity.JvmInfo;
@@ -32,6 +33,11 @@ public class FebsActuatorHelper {
     private static final BigDecimal DECIMAL = new BigDecimal("1048576");
 
     private final FebsMetricsEndpoint metricsEndpoint;
+
+    private static Double convertToMb(Object value) {
+        return new BigDecimal(String.valueOf(value))
+                .divide(DECIMAL, 3, RoundingMode.HALF_UP).doubleValue();
+    }
 
     public List<FebsMetricResponse> getMetricResponseByType(String type) {
         FebsMetricsEndpoint.ListNamesResponse listNames = metricsEndpoint.listNames();
@@ -198,17 +204,12 @@ public class FebsActuatorHelper {
                     NumberFormat numberFormat = NumberFormat.getInstance();
                     numberFormat.setMaximumFractionDigits(20);
                     numberFormat.setGroupingUsed(false);
-                    long timeMillis = Long.parseLong(StringUtils.replace(numberFormat.format(value), ".", ""));
+                    long timeMillis = Long.parseLong(StringUtils.replace(numberFormat.format(value), Strings.DOT, Strings.EMPTY));
                     String startTime = DateUtil.getDateFormat(new Date(timeMillis), DateUtil.FULL_TIME_SPLIT_PATTERN);
                     serverInfo.setProcessStartTime(startTime);
                 default:
             }
         });
         return serverInfo;
-    }
-
-    private static Double convertToMb(Object value) {
-        return new BigDecimal(String.valueOf(value))
-                .divide(DECIMAL, 3, RoundingMode.HALF_UP).doubleValue();
     }
 }

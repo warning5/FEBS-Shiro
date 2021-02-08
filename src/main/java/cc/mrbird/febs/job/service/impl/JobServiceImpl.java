@@ -2,6 +2,7 @@ package cc.mrbird.febs.job.service.impl;
 
 import cc.mrbird.febs.common.entity.FebsConstant;
 import cc.mrbird.febs.common.entity.QueryRequest;
+import cc.mrbird.febs.common.entity.Strings;
 import cc.mrbird.febs.common.utils.SortUtil;
 import cc.mrbird.febs.job.entity.Job;
 import cc.mrbird.febs.job.mapper.JobMapper;
@@ -9,7 +10,6 @@ import cc.mrbird.febs.job.service.IJobService;
 import cc.mrbird.febs.job.utils.ScheduleUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
      */
     @PostConstruct
     public void init() {
-        List<Job> scheduleJobList = this.baseMapper.queryList();
+        List<Job> scheduleJobList = baseMapper.queryList();
         // 如果不存在，则创建
         scheduleJobList.forEach(scheduleJob -> {
             CronTrigger cronTrigger = ScheduleUtil.getCronTrigger(scheduler, scheduleJob.getJobId());
@@ -57,7 +57,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
 
     @Override
     public Job findJob(Long jobId) {
-        return this.getById(jobId);
+        return getById(jobId);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
         }
         Page<Job> page = new Page<>(request.getPageNum(), request.getPageSize());
         SortUtil.handlePageSort(request, page, "createTime", FebsConstant.ORDER_DESC, true);
-        return this.page(page, queryWrapper);
+        return page(page, queryWrapper);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
     public void createJob(Job job) {
         job.setCreateTime(new Date());
         job.setStatus(Job.ScheduleStatus.PAUSE.getValue());
-        this.save(job);
+        save(job);
         ScheduleUtil.createScheduleJob(scheduler, job);
     }
 
@@ -103,7 +103,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
     @Transactional(rollbackFor = Exception.class)
     public void updateJob(Job job) {
         ScheduleUtil.updateScheduleJob(scheduler, job);
-        this.baseMapper.updateById(job);
+        baseMapper.updateById(job);
     }
 
     @Override
@@ -111,38 +111,38 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements IJobS
     public void deleteJobs(String[] jobIds) {
         List<String> list = Arrays.asList(jobIds);
         list.forEach(jobId -> ScheduleUtil.deleteScheduleJob(scheduler, Long.valueOf(jobId)));
-        this.baseMapper.deleteBatchIds(list);
+        baseMapper.deleteBatchIds(list);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateBatch(String jobIds, String status) {
-        List<String> list = Arrays.asList(jobIds.split(StringPool.COMMA));
+        List<String> list = Arrays.asList(jobIds.split(Strings.COMMA));
         Job job = new Job();
         job.setStatus(status);
-        this.baseMapper.update(job, new LambdaQueryWrapper<Job>().in(Job::getJobId, list));
+        baseMapper.update(job, new LambdaQueryWrapper<Job>().in(Job::getJobId, list));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void run(String jobIds) {
-        String[] list = jobIds.split(StringPool.COMMA);
-        Arrays.stream(list).forEach(jobId -> ScheduleUtil.run(scheduler, this.findJob(Long.valueOf(jobId))));
+        String[] list = jobIds.split(Strings.COMMA);
+        Arrays.stream(list).forEach(jobId -> ScheduleUtil.run(scheduler, findJob(Long.valueOf(jobId))));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void pause(String jobIds) {
-        String[] list = jobIds.split(StringPool.COMMA);
+        String[] list = jobIds.split(Strings.COMMA);
         Arrays.stream(list).forEach(jobId -> ScheduleUtil.pauseJob(scheduler, Long.valueOf(jobId)));
-        this.updateBatch(jobIds, Job.ScheduleStatus.PAUSE.getValue());
+        updateBatch(jobIds, Job.ScheduleStatus.PAUSE.getValue());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void resume(String jobIds) {
-        String[] list = jobIds.split(StringPool.COMMA);
+        String[] list = jobIds.split(Strings.COMMA);
         Arrays.stream(list).forEach(jobId -> ScheduleUtil.resumeJob(scheduler, Long.valueOf(jobId)));
-        this.updateBatch(jobIds, Job.ScheduleStatus.NORMAL.getValue());
+        updateBatch(jobIds, Job.ScheduleStatus.NORMAL.getValue());
     }
 }

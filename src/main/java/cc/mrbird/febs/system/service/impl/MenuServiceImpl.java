@@ -1,6 +1,7 @@
 package cc.mrbird.febs.system.service.impl;
 
 import cc.mrbird.febs.common.entity.MenuTree;
+import cc.mrbird.febs.common.entity.Strings;
 import cc.mrbird.febs.common.event.UserAuthenticationUpdatedEventPublisher;
 import cc.mrbird.febs.common.utils.TreeUtil;
 import cc.mrbird.febs.system.entity.Menu;
@@ -10,7 +11,6 @@ import cc.mrbird.febs.system.service.IRoleMenuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +34,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public List<Menu> findUserPermissions(String username) {
-        return this.baseMapper.findUserPermissions(username);
+        return baseMapper.findUserPermissions(username);
     }
 
     @Override
     public MenuTree<Menu> findUserMenus(String username) {
-        List<Menu> menus = this.baseMapper.findUserMenus(username);
-        List<MenuTree<Menu>> trees = this.convertMenus(menus);
+        List<Menu> menus = baseMapper.findUserMenus(username);
+        List<MenuTree<Menu>> trees = convertMenus(menus);
         return TreeUtil.buildMenuTree(trees);
     }
 
@@ -51,8 +51,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             queryWrapper.lambda().like(Menu::getMenuName, menu.getMenuName());
         }
         queryWrapper.lambda().orderByAsc(Menu::getOrderNum);
-        List<Menu> menus = this.baseMapper.selectList(queryWrapper);
-        List<MenuTree<Menu>> trees = this.convertMenus(menus);
+        List<Menu> menus = baseMapper.selectList(queryWrapper);
+        List<MenuTree<Menu>> trees = convertMenus(menus);
 
         return TreeUtil.buildMenuTree(trees);
     }
@@ -64,15 +64,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             queryWrapper.lambda().like(Menu::getMenuName, menu.getMenuName());
         }
         queryWrapper.lambda().orderByAsc(Menu::getMenuId);
-        return this.baseMapper.selectList(queryWrapper);
+        return baseMapper.selectList(queryWrapper);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createMenu(Menu menu) {
         menu.setCreateTime(new Date());
-        this.setMenu(menu);
-        this.baseMapper.insert(menu);
+        setMenu(menu);
+        baseMapper.insert(menu);
     }
 
 
@@ -80,8 +80,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Transactional(rollbackFor = Exception.class)
     public void updateMenu(Menu menu) {
         menu.setModifyTime(new Date());
-        this.setMenu(menu);
-        this.baseMapper.updateById(menu);
+        setMenu(menu);
+        baseMapper.updateById(menu);
 
         Set<Long> userIds = roleMenuService.findUserIdByMenuIds(Lists.newArrayList(String.valueOf(menu.getMenuId())));
         if (CollectionUtils.isNotEmpty(userIds)) {
@@ -92,8 +92,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteMenus(String menuIds) {
-        List<String> menuIdList = Arrays.asList(menuIds.split(StringPool.COMMA));
-        this.delete(menuIdList);
+        List<String> menuIdList = Arrays.asList(menuIds.split(Strings.COMMA));
+        delete(menuIdList);
         Set<Long> userIds = roleMenuService.findUserIdByMenuIds(menuIdList);
         if (CollectionUtils.isNotEmpty(userIds)) {
             publisher.publishEvent(userIds);
@@ -136,10 +136,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             List<String> menuIdList = new ArrayList<>();
             menus.forEach(m -> menuIdList.add(String.valueOf(m.getMenuId())));
             list.addAll(menuIdList);
-            this.roleMenuService.deleteRoleMenusByMenuId(list);
-            this.delete(menuIdList);
+            roleMenuService.deleteRoleMenusByMenuId(list);
+            delete(menuIdList);
         } else {
-            this.roleMenuService.deleteRoleMenusByMenuId(list);
+            roleMenuService.deleteRoleMenusByMenuId(list);
         }
     }
 }

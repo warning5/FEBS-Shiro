@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
+ * SQL拦截器，用于数据脱敏
+ *
  * @author MrBird
  */
 @Data
@@ -34,9 +36,9 @@ public class DesensitizationInterceptor implements Interceptor {
         Object result = invocation.proceed();
         if (result instanceof ArrayList<?>) {
             List<?> list = (ArrayList<?>) result;
-            return this.desensitization(list);
+            return desensitization(list);
         } else {
-            return this.desensitization(result);
+            return desensitization(result);
         }
     }
 

@@ -11,10 +11,7 @@ import java.util.Objects;
  */
 public abstract class HttpContextUtil {
 
-	private HttpContextUtil(){
-
-	}
-	public static HttpServletRequest getHttpServletRequest() {
-		return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-	}
+    public static HttpServletRequest getHttpServletRequest() {
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+    }
 }
